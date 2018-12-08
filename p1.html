@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<!-- saved from url=(0077)https://s.codepen.io/keithclark/fullembedgrid/ksayr?type=embed&animations=run -->
+<html lang="en" class=" -webkit-"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  
+  <link rel="shortcut icon" type="image/x-icon" href="https://static.codepen.io/assets/favicon/favicon-8ea04875e70c4b0bb41da869e81236e54394d63638a1ef12fa558a4a835f1164.ico">
+  <link rel="mask-icon" type="" href="https://static.codepen.io/assets/favicon/logo-pin-f2d2b6d2c61838f7e76325261b7195c27224080bc099486ddd6dccb469b8e8e6.svg" color="#111">
+  <title>CodePen - 3D objects in CSS</title>
+  
+  
+    <style media="" data-href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}table{border-collapse:collapse;border-spacing:0}</style>
+
+  
+      <style>
+      html, body {
+  height: 100%;
+}
+body {
+  font: 12px/1.2 Arial;
+  perspective: 600px;
+  perspective: 600px;
+  background: #666;
+  background: linear-gradient(#222,#222,#444);
+  color: #fff;
+  text-align:center;
+}
+.threedee {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform-style: preserve-3d;
+  transform-origin: 50% 50% 50%;
+  backface-visibility: hidden;
+}
+.assembly {
+  animation: spin 4s linear infinite;
+}
+#box-toggle:checked ~ .assembly .face {
+  box-shadow: inset 0 0 0 1px #0f0;
+  -webkit-mask-image: none !important;
+  backface-visibility: visible;
+}
+@keyframes spin {
+  to {
+    transform: rotateY(360deg) rotateZ(360deg) rotateX(720deg);
+  }
+}
+    </style>
+
+  <script>
+  window.console = window.console || function(t) {};
+</script>
+
+    <script src="./prefixfree.min.js.download"></script>
+
+  
+  <script>
+  if (document.location.search.match(/type=embed/gi)) {
+    window.parent.postMessage("resize", "*");
+  }
+</script>
+
+
+</head>
+
+<body translate="no">
+
+  <input id="box-toggle" type="checkbox">
+<label for="box-toggle">Show geometry</label>
+    <script src="./stopExecutionOnTimeout-41c52890748cd7143004e05d3c5f786c66b19939c4500ce446314d1748483e13.js.download"></script>
+
+  
+  
+
+    <script>
+      var DRUM_TEXTURE = "https://keithclark.co.uk/labs/css-fps/drum2.png";
+
+// Assembiles are for grouping faces and other assembiles
+function createAssembly() {
+    var assembly = document.createElement("div");
+    assembly.className = "threedee assembly";
+    return assembly;
+}
+
+function createFace(w, h, x, y, z, rx, ry, rz, tsrc, tx, ty) {
+    var face = document.createElement("div");
+    face.className = "threedee face";
+    face.style.cssText = PrefixFree.prefixCSS(
+        "background: url(" + tsrc + ") -" + tx.toFixed(2) + "px " + ty.toFixed(2) + "px;" +
+        "width:" + w.toFixed(2) + "px;" +
+        "height:" + h.toFixed(2) + "px;" +
+        "margin-top: -" + (h / 2).toFixed(2) + "px;" +
+        "margin-left: -" + (w / 2).toFixed(2) + "px;" +
+        "transform: translate3d(" + x.toFixed(2) + "px," + y.toFixed(2) + "px," + z.toFixed(2) + "px)" +
+        "rotateX(" + rx.toFixed(2) + "rad) rotateY(" + ry.toFixed(2) + "rad) rotateY(" + rz.toFixed(2) + "rad);");
+    return face;
+}
+
+function createTube(dia, height, sides, texture) {
+    var tube = createAssembly();
+    var sideAngle = (Math.PI / sides) * 2;
+    var sideLen = dia * Math.tan(Math.PI/sides);
+    for (var c = 0; c < sides; c++) {
+        var x = Math.sin(sideAngle * c) * dia / 2;
+        var z = Math.cos(sideAngle * c) * dia / 2;
+        var ry = Math.atan2(x, z);
+        tube.appendChild(createFace(sideLen + 1, height, x, 0, z, 0, ry, 0, texture, sideLen * c, 0));
+    }
+    return tube;
+}
+
+function createBarrel() {
+    var barrel = createTube(100, 196, 20, DRUM_TEXTURE);
+    barrel.appendChild(createFace(100, 100, 0, -98, 0, Math.PI / 2, 0, 0, DRUM_TEXTURE, 0, 100));
+    barrel.appendChild(createFace(100, 100, 0, 98, 0, -Math.PI / 2, 0, 0, DRUM_TEXTURE, 0, 100));
+    return barrel;
+}
+
+document.body.appendChild(createBarrel());
+      //# sourceURL=pen.js
+    </script><div class="threedee assembly"><div class="threedee face" style="background: url(&quot;https://keithclark.co.uk/labs/css-fps/drum2.png&quot;) 0px 0px; width: 16.84px; height: 196px; margin-top: -98px; margin-left: -8.42px; transform: translate3d(0px, 0px, 50px) rotateX(0rad) rotateY(0rad) rotateY(0rad);"></div><div class="threedee face" style="background: url(&quot;https://keithclark.co.uk/labs/css-fps/drum2.png&quot;) -15.84px 0px; width: 16.84px; height: 196px; margin-top: -98px; margin-left: -8.42px; transform: translate3d(15.45px, 0px, 47.55px) rotateX(0rad) rotateY(0.31rad) rotateY(0rad);"></div><div class="threedee face" style="background: url(&quot;https://keithclark.co.uk/labs/css-fps/drum2.png&quot;) -31.68px 0px; width: 16.84px; height: 196px; margin-top: -98px; margin-left: -8.42px; transform: translate3d(29.39px, 0px, 40.45px) rotateX(0rad) rotateY(0.63rad) rotateY(0rad);"></div><div class="threedee face" style="background: url(&quot;https://keithclark.co.uk/labs/css-fps/drum2.png&quot;) -47.52px 0px; width: 16.84px; height: 196px; margin-top: -98px; margin-left: -8.42px; transform: translate3d(40.45px, 0px, 29.39px) rotateX(0rad) rotateY(0.94rad) rotateY(0rad);"></div><div class="threedee face" style="background: url(&quot;https://keithclark.co.uk/labs/css-fps/drum2.png&quot;) -63.35px 0px; width: 16.84px; height: 196px; margin-top: -98px; margin-left: -8.42px; transform: translate3d(47.55px, 0px, 15.45px) rotateX(0rad) rotateY(1.26rad) rotateY(0rad);"></div><div class="threedee face" style="background: url(&quot;https://keithclark.co.uk/labs/css-fps/drum2.png&quot;) -79.19px 0px; width: 16.84px; height: 196px; margin-top: -98px; margin-left: -8.42px; transform: translate3d(50px, 0px, 0px) rotateX(0rad) rotateY(1.57rad) rotateY(0rad);"></div><div class="threedee face" style="background: url(&quot;https://keithclark.co.uk/labs/css-fps/drum2.png&quot;) -95.03px 0px; width: 16.84px; height: 196px; margin-top: -98px; margin-left: -8.42px; transform: translate3d(47.55px, 0px, -15.45px) rotateX(0rad) rotateY(1.88rad) rotateY(0rad);"></div><div class="threedee face" style="background: url(&quot;https://keithclark.co.uk/labs/css-fps/drum2.png&quot;) -110.87px 0px; width: 16.84px; height: 196px; margin-top: -98px; margin-left: -8.42px; transform: translate3d(40.45px, 0px, -29.39px) rotateX(0rad) rotateY(2.2rad) rotateY(0rad);"></div><div class="threedee face" style="background: url(&quot;https://keithclark.co.uk/labs/css-fps/drum2.png&quot;) -126.71px 0px; width: 16.84px; height: 196px; margin-top: -98px; margin-left: -8.42px; transform: translate3d(29.39px, 0px, -40.45px) rotateX(0rad) rotateY(2.51rad) rotateY(0rad);"></div><div class="threedee face" style="background: url(&quot;https://keithclark.co.uk/labs/css-fps/drum2.png&quot;) -142.55px 0px; width: 16.84px; height: 196px; margin-top: -98px; margin-left: -8.42px; transform: translate3d(15.45px, 0px, -47.55px) rotateX(0rad) rotateY(2.83rad) rotateY(0rad);"></div><div class="threedee face" style="background: url(&quot;https://keithclark.co.uk/labs/css-fps/drum2.png&quot;) -158.38px 0px; width: 16.84px; height: 196px; margin-top: -98px; margin-left: -8.42px; transform: translate3d(0px, 0px, -50px) rotateX(0rad) rotateY(3.14rad) rotateY(0rad);"></div><div class="threedee face" style="background: url(&quot;https://keithclark.co.uk/labs/css-fps/drum2.png&quot;) -174.22px 0px; width: 16.84px; height: 196px; margin-top: -98px; margin-left: -8.42px; transform: translate3d(-15.45px, 0px, -47.55px) rotateX(0rad) rotateY(-2.83rad) rotateY(0rad);"></div><div class="threedee face" style="background: url(&quot;https://keithclark.co.uk/labs/css-fps/drum2.png&quot;) -190.06px 0px; width: 16.84px; height: 196px; margin-top: -98px; margin-left: -8.42px; transform: translate3d(-29.39px, 0px, -40.45px) rotateX(0rad) rotateY(-2.51rad) rotateY(0rad);"></div><div class="threedee face" style="background: url(&quot;https://keithclark.co.uk/labs/css-fps/drum2.png&quot;) -205.9px 0px; width: 16.84px; height: 196px; margin-top: -98px; margin-left: -8.42px; transform: translate3d(-40.45px, 0px, -29.39px) rotateX(0rad) rotateY(-2.2rad) rotateY(0rad);"></div><div class="threedee face" style="background: url(&quot;https://keithclark.co.uk/labs/css-fps/drum2.png&quot;) -221.74px 0px; width: 16.84px; height: 196px; margin-top: -98px; margin-left: -8.42px; transform: translate3d(-47.55px, 0px, -15.45px) rotateX(0rad) rotateY(-1.88rad) rotateY(0rad);"></div><div class="threedee face" style="background: url(&quot;https://keithclark.co.uk/labs/css-fps/drum2.png&quot;) -237.58px 0px; width: 16.84px; height: 196px; margin-top: -98px; margin-left: -8.42px; transform: translate3d(-50px, 0px, 0px) rotateX(0rad) rotateY(-1.57rad) rotateY(0rad);"></div><div class="threedee face" style="background: url(&quot;https://keithclark.co.uk/labs/css-fps/drum2.png&quot;) -253.42px 0px; width: 16.84px; height: 196px; margin-top: -98px; margin-left: -8.42px; transform: translate3d(-47.55px, 0px, 15.45px) rotateX(0rad) rotateY(-1.26rad) rotateY(0rad);"></div><div class="threedee face" style="background: url(&quot;https://keithclark.co.uk/labs/css-fps/drum2.png&quot;) -269.25px 0px; width: 16.84px; height: 196px; margin-top: -98px; margin-left: -8.42px; transform: translate3d(-40.45px, 0px, 29.39px) rotateX(0rad) rotateY(-0.94rad) rotateY(0rad);"></div><div class="threedee face" style="background: url(&quot;https://keithclark.co.uk/labs/css-fps/drum2.png&quot;) -285.09px 0px; width: 16.84px; height: 196px; margin-top: -98px; margin-left: -8.42px; transform: translate3d(-29.39px, 0px, 40.45px) rotateX(0rad) rotateY(-0.63rad) rotateY(0rad);"></div><div class="threedee face" style="background: url(&quot;https://keithclark.co.uk/labs/css-fps/drum2.png&quot;) -300.93px 0px; width: 16.84px; height: 196px; margin-top: -98px; margin-left: -8.42px; transform: translate3d(-15.45px, 0px, 47.55px) rotateX(0rad) rotateY(-0.31rad) rotateY(0rad);"></div><div class="threedee face" style="background: url(&quot;https://keithclark.co.uk/labs/css-fps/drum2.png&quot;) 0px 100px; width: 100px; height: 100px; margin-top: -50px; margin-left: -50px; transform: translate3d(0px, -98px, 0px) rotateX(1.57rad) rotateY(0rad) rotateY(0rad);"></div><div class="threedee face" style="background: url(&quot;https://keithclark.co.uk/labs/css-fps/drum2.png&quot;) 0px 100px; width: 100px; height: 100px; margin-top: -50px; margin-left: -50px; transform: translate3d(0px, 98px, 0px) rotateX(-1.57rad) rotateY(0rad) rotateY(0rad);"></div></div>
+
+
+
+  
+  
+
+  <script src="./css_reload-2a5c7ad0fe826f66e054c6020c99c1e1c63210256b6ba07eb41d7a4cb0d0adab.js.download"></script>
+
+
+
+ 
+</body></html>
